@@ -1,4 +1,5 @@
 import './App.css';
+import Weather from './components/weather'
 import React, { useEffect, useState } from 'react';
 
 function App() {
@@ -6,6 +7,8 @@ function App() {
   const [lat, setLat] = useState([]);
   const [long, setLong] = useState([]);
   const [data, setData] = useState([]);
+  const API = process.env.REACT_APP_API_URL;
+  const KEY = process.env.REACT_APP_API_KEY;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,11 +17,10 @@ function App() {
         setLong(position.coords.longitude);
       });
 
-      await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&APPID=3a289691966150f9473867d42eeca1dd`)
+      await fetch(`${API}/onecall?lat=${lat}&lon=${long}&APPID=${KEY}`)
       .then(response => response.json() )
       .then(result => {
         setData(result)
-        console.log(result);
       });
     }
     fetchData();
@@ -27,7 +29,10 @@ function App() {
 
   return (
     <div className="App">
-
+      {(typeof data.main != 'undefined')
+      ? <Weather data={data}/>
+      : <div>Application under maintaince.</div>
+    }
     </div>
   );
 }
